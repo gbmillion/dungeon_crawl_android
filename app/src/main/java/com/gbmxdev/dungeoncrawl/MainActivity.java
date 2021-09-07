@@ -26,7 +26,5 @@ public class MainActivity extends AppCompatActivity {
         System.out.println(c1);
         game dungeon = new game();
         game.main( "");
-
-
     }
 }
