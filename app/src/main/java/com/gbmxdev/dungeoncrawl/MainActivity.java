@@ -11,7 +11,13 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.util.Random;
 import java.util.Scanner;
+/*
+bugs:
+it basially exicutes the entire game once every command, which may be a deficit
+it has an extra unimplimented activity that illustrates the usage of an Intent
+it does not work it vertical mode
 
+ */
 public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
     @Override
