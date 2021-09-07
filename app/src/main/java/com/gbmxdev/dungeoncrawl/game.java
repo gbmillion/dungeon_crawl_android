@@ -270,6 +270,7 @@ public class game {//main class
 		System.out.print("Generated 100x100 map.\n");
 		itemdb.load(args);//reads the item.db file into the itemdb and then start player creation
 		System.out.println("What would you like your player to be called?");
+		/*need to write input field in ui for this
 		Scanner sc= new Scanner(System.in); 
 		input = sc.nextLine(); 
 		while(0==0) {
@@ -277,7 +278,8 @@ public class game {//main class
 				System.out.println("You must enter a name.");
 			} else break;
 			input = sc.nextLine();
-		}
+		}*/
+		input = "Player";
 		toon.setName(input);//apply class to player
 		System.out.println("Predefined classes are: mage,fighter,healer,rouge [or enter your own]");
 		toon.apply_class("default");
@@ -374,6 +376,7 @@ public class game {//main class
 				break;
 			default:
 				System.out.print("Movement keys: [w,a,s,d]\n");
+				System.exit(0);//remove this one we have input
 			}
 		}		
 	} 

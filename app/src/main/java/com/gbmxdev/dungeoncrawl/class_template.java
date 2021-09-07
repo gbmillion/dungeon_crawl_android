@@ -18,10 +18,11 @@ public class class_template implements template { // character classes
 	public int mana=100+rand.nextInt(20);
 	//apply predefined class to generate states if desired
 	public int apply_class(String class_name) throws IOException {
-		@SuppressWarnings("resource")
-		Scanner sc= new Scanner(System.in); 
+		//Scanner sc= new Scanner(System.in);
 		System.out.print("Enter a class: "); 
-		this.clas = sc.nextLine(); //get class name
+		//this.clas = sc.nextLine(); //get class name
+		this.clas="";
+		//using default generated class until we have input
 		if (this.clas.equals("") ){//use the default class if nothing is selected
 			this.clas=class_name;
 			System.out.println("Using randomly genorated values for your class.");
