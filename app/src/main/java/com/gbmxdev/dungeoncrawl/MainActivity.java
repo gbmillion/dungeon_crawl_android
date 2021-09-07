@@ -1,12 +1,24 @@
 package com.gbmxdev.dungeoncrawl;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
+
 import java.io.IOException;
 import java.util.Random;
 import java.util.Scanner;
+import android.content.Context;
+import android.graphics.Rect;
+import android.text.TextPaint;
+import android.util.AttributeSet;
+import android.view.animation.LinearInterpolator;
+import android.widget.Scroller;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
@@ -31,74 +43,78 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private static void step(player toon, item_db itemdb ){//take a step
+    private void step(player toon, item_db itemdb){//take a step
         Random rand = new Random();
-        if (rand.nextInt(100) < 30) trap(toon);//30% to hit trap
-        else if (rand.nextInt(100) > 90) item( toon,itemdb);//10% chance to get item
+        if (rand.nextInt(100) < 30) this.trap(toon);//30% to hit trap
+        else if (rand.nextInt(100) > 90) this.item( toon,itemdb);//10% chance to get item
     }
-    private static void trap(player toon ){//apply trap damage
+    private   void trap(player toon ){//apply trap damage
+        TextView output = (TextView)findViewById(R.id.textView2);
         Random rand = new Random();
         toon.setHp(toon.getHp() - rand.nextInt(10));
-        System.out.println("You have stepped on a trap, your hp is now " + toon.getHp()  );
+        output.append("You have stepped on a trap, your hp is now " + toon.getHp()  +".\n");
     }
-    private static void item( player toon, item_db itemdb ){ //find random item
+    private   void item( player toon, item_db itemdb ){ //find random item
+        TextView output = (TextView)findViewById(R.id.textView2);
+        output.setMovementMethod(new ScrollingMovementMethod());
         Random rand = new Random();
         int item_found=rand.nextInt(itemdb.getSize());
-        System.out.println("You have found a " + itemdb.items_db[item_found][0]+".");
+        output.append("You have found a " + itemdb.items_db[item_found][0]+".\n");
         toon.inventory[toon.getInv_size()][0]= itemdb.items_db[item_found][0];//assign item from item_db to inventory
         toon.inventory[toon.getInv_size()][1]= itemdb.items_db[item_found][1];
         toon.inventory[toon.getInv_size()][2]= itemdb.items_db[item_found][2];
         toon.setInv_size( toon.getInv_size() + 1 );//track size of inventory
     }
-    private static void combat( player toon, int monster_hp){//start combat
+    private   void combat( player toon, int monster_hp){//start combat
         int hit_dmg=0, heal=0;
         Random rand = new Random();
         npc boss = new npc();
-
+        TextView output = (TextView)findViewById(R.id.textView2);
+        output.setMovementMethod(new ScrollingMovementMethod());
         if (monster_hp  > 100) {
 
             monster_hp = 100 + rand.nextInt(200);
-            System.out.println("Monster has "+monster_hp+".");
-            System.out.println("A Boss monster has attacked!");
+            output.append("Monster has "+monster_hp+".\n");
+            output.append("A Boss monster has attacked!"+".\n");
 
             while(monster_hp>0){//combat loop until monster dead
                 if (rand.nextInt(100)  > 50){ //monster hits you
-                    System.out.println("The monster hits you.");
+                    output.append("The monster hits you."+".\n");
                     if(toon.getDexterity() < rand.nextInt(20) ){//use dex to determine if you avoid an attack
                         boss.setStamina(boss.getStamina() - 10);
                         if (boss.getStamina()<= 0 ) hit_dmg = boss.getStrength() *  rand.nextInt(5) ;
                         else hit_dmg = boss.getStrength() *  rand.nextInt(10) ;
                         toon.setHp(toon.getHp()-hit_dmg) ;
-                        System.out.println("You have been hit for "+hit_dmg+" hitpoints.");
+                        output.append("You have been hit for "+hit_dmg+" hitpoints."+".\n");
                         hit_dmg=0;
                     } else if (boss.getWisdom() < rand.nextInt(20)) {//healing
                         heal = rand.nextInt(10);
-                        System.out.println("The gods have favor on the monster, healing you for "+heal+".");
+                        output.append("The gods have favor on the monster, healing you for "+heal+".\n");
                         toon.setHp(toon.getHp()+heal);
                     } else {
-                        System.out.println("You jump out of the way, avoiding damage.");
+                        output.append("You jump out of the way, avoiding damage."+".\n");
                     }
                     if(toon.getHp()<=0){//check players hp & exit if dead
-                        System.out.println("You have died.");
+                        output.append("You have died."+".\n");
                         System.exit(0);
                         break;
                     } else {
-                        System.out.println("Player Health: "+ toon.getHp());//track hit points during combat
-                        System.out.println("Monster Health: "+ boss.getHp());//track hit points during combat
+                        output.append("Player Health: "+ toon.getHp()+".\n");//track hit points during combat
+                        output.append("Monster Health: "+ boss.getHp()+".\n");//track hit points during combat
 
                     }
                     if (boss.getAgility() > rand.nextInt(20)){//check agil for chance of additional attack from boss
-                        System.out.println("Monster dodges a blow and are granted an additional attack.");
+                        output.append("Monster dodges a blow and are granted an additional attack."+".\n");
                         hit_dmg = boss.getStrength() *  rand.nextInt(10) ;
                         toon.setHp(toon.getHp() - hit_dmg);
-                        System.out.println("The monster has hit you for "+hit_dmg+".");
+                        output.append("The monster has hit you for "+hit_dmg+"."+".\n");
                         hit_dmg=0;
                     }
                     if(boss.getIntelligence()>rand.nextInt(20 )){
                         if (boss.getMana() > 0){
                             hit_dmg = rand.nextInt(10) ;
                             toon.setHp(toon.getHp() - hit_dmg);
-                            System.out.println("Monster's spell has hit you for "+hit_dmg+".");
+                            output.append("Monster's spell has hit you for "+hit_dmg+"."+".\n");
                             hit_dmg=0;
                             boss.setMana(boss.getMana()-10);
                         }
@@ -113,15 +129,15 @@ public class MainActivity extends AppCompatActivity {
                             else hit_dmg = toon.getStrength() *  rand.nextInt(10) ;
                             // if you're out of stamina you do half damage
                             monster_hp = monster_hp - hit_dmg;
-                            System.out.println("You have hit the monster for "+hit_dmg+".");
+                            output.append("You have hit the monster for "+hit_dmg+"."+".\n");
                             hit_dmg=0;
                         } else {//healing
                             heal = rand.nextInt(10);
-                            System.out.println("The gods have favor on you, healing you for "+heal+".");
+                            output.append("The gods have favor on you, healing you for "+heal+"."+".\n");
                             toon.setHp(toon.getHp()+heal);
                         }
                     } else {
-                        System.out.println("The monster avoids your blow.");
+                        output.append("The monster avoids your blow."+".\n");
                     }
 
                 }
@@ -130,21 +146,21 @@ public class MainActivity extends AppCompatActivity {
                     if (toon.getMana() > 0){
                         hit_dmg = rand.nextInt(10) ;
                         monster_hp = monster_hp - hit_dmg;
-                        System.out.println("Your spell  has hit the monster for "+hit_dmg+".");
+                        output.append("Your spell  has hit the monster for "+hit_dmg+"."+".\n");
                         hit_dmg=0;
                         toon.setMana(toon.getMana()-10);
                     }
 
                 }
                 if (toon.getAgility() > rand.nextInt(20)){//check agil for chance of additional attack
-                    System.out.println("You dodge a blow and are granted an additional attack.");
+                    output.append("You dodge a blow and are granted an additional attack."+".\n");
                     hit_dmg = toon.getStrength() *  rand.nextInt(10) ;
                     monster_hp = monster_hp - hit_dmg;
-                    System.out.println("You have hit the monster for "+hit_dmg+".");
+                    output.append("You have hit the monster for "+hit_dmg+"."+".\n");
                     hit_dmg=0;
                 }
                 if(monster_hp<=0){//you have killed the monster, reset player
-                    System.out.println("The monster is dead.");
+                    output.append("The monster is dead."+".\n");
                     toon.setMana(100);
                     toon.setStamina(100);
                     toon.setHp(100);
@@ -154,21 +170,21 @@ public class MainActivity extends AppCompatActivity {
 
         while(monster_hp>0 && monster_hp  < 100){//combat loop until monster dead
             if (rand.nextInt(100)  > 50){ //monster hits you
-                System.out.println("The monster hits you.");
+                output.append("The monster hits you."+".\n");
                 if(toon.getDexterity() < rand.nextInt(20) ){//use dex to determine if you avoid an attack
                     hit_dmg = rand.nextInt(20) * rand.nextInt(10) ;
                     toon.setHp(toon.getHp()-hit_dmg) ;
-                    System.out.println("You have been hit for "+hit_dmg+".");
+                    output.append("You have been hit for "+hit_dmg+"."+".\n");
                     hit_dmg=0;
                 } else {
-                    System.out.println("You jump out of the way, avoiding damage.");
+                    output.append("You jump out of the way, avoiding damage."+".\n");
                 }
                 if(toon.getHp()<=0){//check players hp & exit if dead
-                    System.out.println("You have died.");
+                    output.append("You have died."+".\n");
                     System.exit(0);
                     break;
                 } else {
-                    System.out.println("Health: "+ toon.getHp());//track hit points during combat
+                    output.append("Health: "+ toon.getHp()+".\n");//track hit points during combat
                 }
             } else {
                 //you hit monster (or heal yourself)
@@ -178,11 +194,11 @@ public class MainActivity extends AppCompatActivity {
                     else hit_dmg = toon.getStrength() *  rand.nextInt(10) ;
                     // if you're out of stamina you do half damage
                     monster_hp = monster_hp - hit_dmg;
-                    System.out.println("You have hit the monster for "+hit_dmg+".");
+                    output.append("You have hit the monster for "+hit_dmg+"."+".\n");
                     hit_dmg=0;
                 } else {//healing
                     heal = rand.nextInt(10);
-                    System.out.println("The gods have favor on you, healing you for "+heal+".");
+                    output.append("The gods have favor on you, healing you for "+heal+"."+".\n");
                     toon.setHp(toon.getHp()+heal);
                 }
             }
@@ -191,28 +207,30 @@ public class MainActivity extends AppCompatActivity {
                 if (toon.getMana() > 0){
                     hit_dmg = rand.nextInt(10) ;
                     monster_hp = monster_hp - hit_dmg;
-                    System.out.println("Your spell  has hit the monster for "+hit_dmg+".");
+                    output.append("Your spell  has hit the monster for "+hit_dmg+"."+".\n");
                     hit_dmg=0;
                     toon.setMana(toon.getMana()-10);
                 }
 
             }
             if (toon.getAgility() > rand.nextInt(20)){//check agil for chance of additional attack
-                System.out.println("You dodge a blow and are granted an additional attack.");
+                output.append("You dodge a blow and are granted an additional attack."+".\n");
                 hit_dmg = toon.getStrength() *  rand.nextInt(10) ;
                 monster_hp = monster_hp - hit_dmg;
-                System.out.println("You have hit the monster for "+hit_dmg+".");
+                output.append("You have hit the monster for "+hit_dmg+"."+".\n");
                 hit_dmg=0;
             }
             if(monster_hp<=0){//you have killed the monster, reset player
-                System.out.println("The monster is dead.");
+                output.append("The monster is dead."+".\n");
                 toon.setMana(100);
                 toon.setStamina(100);
                 toon.setHp(100);
             }
         }
     }
-    private static void use (player toon, int invent_item) {
+    private   void use (player toon, int invent_item  ) {
+        TextView output = (TextView)findViewById(R.id.textView2);
+        output.setMovementMethod(new ScrollingMovementMethod());
         Random rand = new Random();
         int effect = 0;
         char input = toon.inventory[invent_item][2].charAt(0);//get item identification number from inventory entry
@@ -220,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
             case '1'://type 1 is potion
                 effect = rand.nextInt(3);
                 //make sure the potion isn't empty and tell the player the effects
-                if( toon.inventory[invent_item][1] != "empty") System.out.println("Using "+toon.inventory[invent_item][0]+" of "+toon.inventory[invent_item][1]+" for effect of "+effect+".");
+                if( toon.inventory[invent_item][1] != "empty") output.append("Using "+toon.inventory[invent_item][0]+" of "+toon.inventory[invent_item][1]+" for effect of "+effect+"."+".\n");
                 //check which attribute the potion effects and apply it
                 switch (toon.inventory[invent_item][1]) {
                     case "Dexterity":
@@ -248,15 +266,17 @@ public class MainActivity extends AppCompatActivity {
                         toon.setAgility(toon.getAgility() + effect);
                         break;
                     default:
-                        System.out.println("This potion is unknown.");
+                        output.append("This potion is unknown."+".\n");
                 }//empty the potion
                 toon.inventory[invent_item][1] = "empty";
                 break;
             default://just add case to this switch statement to extend item types
-                System.out.println("Unknown item type.");
+                output.append("Unknown item type."+".\n");
         }
     }
     public void main(View view) throws IOException {
+        TextView output = (TextView)findViewById(R.id.textView2);
+        output.setMovementMethod(new ScrollingMovementMethod());
         player toon = new player();
         item_db itemdb = new item_db();
         int[][] map = new int[100][100];
@@ -266,7 +286,7 @@ public class MainActivity extends AppCompatActivity {
         Random rand = new Random();
         //fill in the 100x100 map with monsters (50% chance of monsters)
 
-        System.out.println("Welcome to dungeon hack!\nCommands: i[inventory],x[exit],u[use],c[stats]");
+        output.append("Welcome to dungeon hack!\nCommands: i[inventory],x[exit],u[use],c[stats]"+".\n");
         for(i=0;i<100;++i){
             for(e=0;e<100;++e){
                 //squares have a fifty fifty chance to have a random monster value on them
@@ -279,24 +299,25 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-        System.out.print("Generated 100x100 map.\n");
+        output.append("Generated 100x100 map."+".\n");
         itemdb.load( );//reads the item.db file into the itemdb and then start player creation
-        System.out.println("What would you like your player to be called?");
+        output.append("What would you like your player to be called?"+".\n");
         //need to get input for player name & not use generated classes
         input = "Player";
         toon.setName(input);//apply class to player
-        System.out.println("Predefined classes are: mage,fighter,healer,rouge [or enter your own]");
+        output.append("Predefined classes are: mage,fighter,healer,rouge [or enter your own]"+".\n");
         toon.apply_class("default");
         i=rand.nextInt(100); //set starting position to a random location on the map
         e =rand.nextInt(100);
         //main game loop
-        System.out.print("Movement keys: [w,a,s,d]\n");
+        output.append("Movement keys: [w,a,s,d]"+".\n");
         command (   toon,   itemdb ,  map );
     }
     public void command (  player toon, item_db itemdb ,int[][] map ){
         EditText editText = (EditText) findViewById(R.id.editTextTextPersonName);
         String message = editText.getText().toString();
         Random rand = new Random();
+        TextView output = (TextView)findViewById(R.id.textView2);
         int count =0 ;
         int i=rand.nextInt(100);
         int e=rand.nextInt(100);//random starting position on map
@@ -308,10 +329,10 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case "a":
                     if (e == 100) {//make sure we still on the map
-                        System.out.println("You can not go that way.");
+                        output.append("You can not go that way."+".\n");
                     } else {
                         e++;
-                        System.out.print("You have went left[w,a,s,d].\n");
+                        output.append("You have went left[w,a,s,d]."+".\n");
                         if(map[e][i]>0){//check for monster
                             combat(toon,map[e][i]);
                         } else step(toon,  itemdb);//take a step
@@ -319,10 +340,10 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case "s":
                     if (i == 0) {
-                        System.out.println("You can not go that way.");
+                        output.append("You can not go that way."+".\n");
                     } else {
                         i--;
-                        System.out.print("You have gone back[w,a,s,d].\n");
+                        output.append("You have gone back[w,a,s,d]."+".\n");
                         if(map[e][i]>0){
                             combat(toon,map[e][i]);
                         }else step(toon,  itemdb);
@@ -330,10 +351,10 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case "d":
                     if (e == 0) {
-                        System.out.println("You can not go that way.");
+                        output.append("You can not go that way."+".\n");
                     } else {
                         e--;
-                        System.out.print("You have gone right[w,a,s,d].\n");
+                        output.append("You have gone right[w,a,s,d]."+".\n");
                         if(map[e][i]>0){
                             combat(toon,map[e][i]);
                         }else step(toon,  itemdb);
@@ -341,10 +362,10 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case "w":
                     if (i == 1000) {
-                        System.out.println("You can not go that way.");
+                        output.append("You can not go that way."+".\n");
                     } else {
                         i++;
-                        System.out.print("You have gone forward[w,a,s,d].\n");
+                        output.append("You have gone forward[w,a,s,d]."+".\n");
                         if(map[e][i]>0){
                             combat(toon,map[e][i]);
                         }else step(toon,  itemdb);
@@ -352,7 +373,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case "i": //list inventory contents
                     for(count=0;count< toon.getInv_size();++count){
-                        System.out.println(count + " " +toon.inventory[count][0] + " of " + toon.inventory[count][1]);
+                        output.append(count + " " +toon.inventory[count][0] + " of " + toon.inventory[count][1]);
                     }
 
                     break;
@@ -365,7 +386,7 @@ public class MainActivity extends AppCompatActivity {
                 case "u":  //use item
                     Scanner scanner = new Scanner(System.in);//I don't know why
                     String buff = scanner.nextLine(); //		these lines are needed
-                    System.out.println("Which inventory item to use:");
+                    output.append("Which inventory item to use:"+".\n");
                     //need to get item number input for use method, replace 0 in method call
                     use(toon, 0);
                     break;
@@ -373,23 +394,25 @@ public class MainActivity extends AppCompatActivity {
                     item(toon, itemdb);
                     break;
                 case "c"://print player stats
-                    System.out.println("Your name is " + toon.getName() + ".");
-                    System.out.println("Class: " + toon.getClas() + ".");
-                    System.out.println("Agi: \t" + toon.getAgility() + ".");
-                    System.out.println("Dex: \t" + toon.getDexterity() + ".");
-                    System.out.println("Int: \t" + toon.getIntelligence() + ".");
-                    System.out.println("Sta: \t" + toon.getStamina() + ".");
-                    System.out.println("Str: \t" + toon.getStrength() + ".");
-                    System.out.println("Wis: \t" + toon.getWisdom() + ".");
-                    System.out.println("Hit points: \t" + toon.getHp() + ".");
-                    System.out.println("Mana Points: \t" + toon.getMana() + ".");
+                    output.append(""+"New text line."+".\n");
+                    output.append("Your name is " + toon.getName() + "."+".\n");
+                    output.append("Class: " + toon.getClas() + "."+".\n");
+                    output.append("Agi: \t" + toon.getAgility() + "."+".\n");
+                    output.append("Dex: \t" + toon.getDexterity() + "."+".\n");
+                    output.append("Int: \t" + toon.getIntelligence() + "."+".\n");
+                    output.append("Sta: \t" + toon.getStamina() + "."+".\n");
+                    output.append("Str: \t" + toon.getStrength() + "."+".\n");
+                    output.append("Wis: \t" + toon.getWisdom() + "."+".\n");
+                    output.append("Hit points: \t" + toon.getHp() + "."+".\n");
+                    output.append("Mana Points: \t" + toon.getMana() + "."+".\n");
                     break;
                 case "\0":
                     break;
                 default:
-                    System.out.println("Movement keys: [w,a,s,d]\n" );
-                    System.exit(0);//remove this one we have input
+                    output.append("Movement keys: [w,a,s,d]\n");
+                    //System.exit(0);//remove this one we have input
             }
         }
     }
+
 }
