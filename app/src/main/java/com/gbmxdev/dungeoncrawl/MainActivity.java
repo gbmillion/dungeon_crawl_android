@@ -1,7 +1,6 @@
 package com.gbmxdev.dungeoncrawl;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
@@ -12,13 +11,6 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.util.Random;
 import java.util.Scanner;
-import android.content.Context;
-import android.graphics.Rect;
-import android.text.TextPaint;
-import android.util.AttributeSet;
-import android.view.animation.LinearInterpolator;
-import android.widget.Scroller;
-import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
@@ -37,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     }
     public void sendMessage(View view) throws IOException {
         Intent intent = new Intent(this, DisplayMessageActivity.class);
-        EditText editText = (EditText) findViewById(R.id.editTextTextPersonName);
+        EditText editText = (EditText) findViewById(R.id.cmd);
         String message = editText.getText().toString();
         intent.putExtra(EXTRA_MESSAGE, message);
         startActivity(intent);
@@ -277,6 +269,8 @@ public class MainActivity extends AppCompatActivity {
     public void main(View view) throws IOException {
         TextView output = (TextView)findViewById(R.id.textView2);
         output.setMovementMethod(new ScrollingMovementMethod());
+        EditText editText = (EditText) findViewById(R.id.cmd);
+        String message = editText.getText().toString();
         player toon = new player();
         item_db itemdb = new item_db();
         int[][] map = new int[100][100];
@@ -302,11 +296,14 @@ public class MainActivity extends AppCompatActivity {
         output.append("Generated 100x100 map."+".\n");
         itemdb.load( );//reads the item.db file into the itemdb and then start player creation
         output.append("What would you like your player to be called?"+".\n");
+        EditText etext = (EditText) findViewById(R.id.cmd2);
+        input = etext.getText().toString();
         //need to get input for player name & not use generated classes
-        input = "Player";
         toon.setName(input);//apply class to player
         output.append("Predefined classes are: mage,fighter,healer,rouge [or enter your own]"+".\n");
-        toon.apply_class("default");
+        etext = (EditText) findViewById(R.id.cmd3);
+        input = etext.getText().toString();
+        toon.apply_class(input);
         i=rand.nextInt(100); //set starting position to a random location on the map
         e =rand.nextInt(100);
         //main game loop
@@ -314,7 +311,7 @@ public class MainActivity extends AppCompatActivity {
         command (   toon,   itemdb ,  map );
     }
     public void command (  player toon, item_db itemdb ,int[][] map ){
-        EditText editText = (EditText) findViewById(R.id.editTextTextPersonName);
+        EditText editText = (EditText) findViewById(R.id.cmd);
         String message = editText.getText().toString();
         Random rand = new Random();
         TextView output = (TextView)findViewById(R.id.textView2);

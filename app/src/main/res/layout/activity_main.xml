@@ -7,7 +7,7 @@
     tools:context=".MainActivity">
 
     <EditText
-        android:id="@+id/editTextTextPersonName"
+        android:id="@+id/cmd"
         android:layout_width="179dp"
         android:layout_height="51dp"
         android:layout_marginTop="16dp"
@@ -15,6 +15,32 @@
         android:ems="10"
         android:hint="@string/input_message"
         android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/cmd2"
+        android:layout_width="172dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="72dp"
+        android:layout_marginEnd="220dp"
+        android:ems="10"
+        android:hint="@string/input_message"
+        android:inputType="textPersonName"
+        android:text="Player name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/cmd3"
+        android:layout_width="163dp"
+        android:layout_height="43dp"
+        android:layout_marginTop="72dp"
+        android:layout_marginEnd="40dp"
+        android:ems="10"
+        android:hint="@string/input_message"
+        android:inputType="textPersonName"
+        android:text="player class"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -42,10 +68,10 @@
 
     <TextView
         android:id="@+id/textView2"
-        android:layout_width="370dp"
-        android:layout_height="628dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="82dp"
+        android:layout_width="382dp"
+        android:layout_height="587dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="128dp"
         android:lines="10"
         android:maxLines="500"
         android:scrollbars="vertical"
