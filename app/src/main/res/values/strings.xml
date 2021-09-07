@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">dungeon crawl</string>
     <string name="input_message">Enter comman [w,a,s,d]:</string>
-    <string name="button_send">Send</string>
+    <string name="button_send">Stats</string>
     <string name="test">gest</string>
+    <string name="button_cmd">CMD</string>
 </resources>

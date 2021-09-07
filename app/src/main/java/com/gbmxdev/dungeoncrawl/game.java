@@ -243,7 +243,7 @@ public class game {//main class
 				System.out.println("Unknown item type.");
 		} 
 	} 
-	public static void main(String args)  throws IOException {
+	public static void main( )  throws IOException {
 		player toon = new player();
 		item_db itemdb = new item_db();
 		int c1 = 0; 
@@ -268,7 +268,7 @@ public class game {//main class
 			}
 		}
 		System.out.print("Generated 100x100 map.\n");
-		itemdb.load(args);//reads the item.db file into the itemdb and then start player creation
+		itemdb.load( );//reads the item.db file into the itemdb and then start player creation
 		System.out.println("What would you like your player to be called?");
 		/*need to write input field in ui for this
 		Scanner sc= new Scanner(System.in); 

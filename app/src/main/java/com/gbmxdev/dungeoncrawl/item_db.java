@@ -24,7 +24,7 @@ public class item_db {//item.db is stored in csv format
 		}
 	}//load items from item.db file 
 
-    public void load(String args) throws IOException{
+    public void load(   ) throws IOException{
 
 		System.out.println("Loading the database.");
 
